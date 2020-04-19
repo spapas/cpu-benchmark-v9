@@ -23,6 +23,7 @@
     @click="open=open?false:true" 
     x-text="open?'X':'?'"
     ></button>
+    <h4 class='text-lg inline font-bold px-4' >Show help</h4>
         
     <div 
     x-show.transition="open" 
@@ -51,21 +52,48 @@ Here's a simple example that cycles through several background colors at differe
 </div> <!-- -->
 </div> <!-- xdata -->
 
-  <main>
-    <div class="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
-      <!-- Replace with your content -->
-      Hello, hello, hello
-      <table>
-        <tr>
-            <th>H1</th>
-            <th>H1</th>
-        </tr>
-      </table>
-      <!-- /End replace -->
+  <main x-data="data()">
+    <span x-text='d'>ss</span>
+    <div class="max-w-5xl mx-auto py-6">
+<table class="table-auto w-full">
+  <thead>
+    <tr class='border'>
+      <th class="px-4 py-2">Title</th>
+      <th class="px-4 py-2">Author</th>
+      <th class="px-4 py-2">Views</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="border px-4 py-2">Intro to CSS</td>
+      <td class="border px-4 py-2">Adam</td>
+      <td class="border px-4 py-2">858</td>
+    </tr>
+    <tr class="bg-gray-100">
+      <td class="border px-4 py-2">A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
+      <td class="border px-4 py-2">Adam</td>
+      <td class="border px-4 py-2">112</td>
+    </tr>
+    <tr>
+      <td class="border px-4 py-2">Intro to JavaScript</td>
+      <td class="border px-4 py-2">Chris</td>
+      <td class="border px-4 py-2">1,280</td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
   </main>
   </body>
   <script>
+    console.log("Z")
+    let data = () => {
 
+        console.log("DATA")
+        
+        return {
+            'd': 33
+        }
+    }
   </script>
 </html>
