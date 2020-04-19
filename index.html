@@ -2,7 +2,8 @@
 <html lang="en">
   <title> </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
+
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />  
   <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 
@@ -52,47 +53,63 @@ Here's a simple example that cycles through several background colors at differe
 </div> <!-- -->
 </div> <!-- xdata -->
 
-  <main x-data="data()">
-    <span x-text='d'>ss</span>
+  <main x-data="data()" x-init="loadCPUs()">
+    <span x-text='loading'>ss</span>
     <div class="max-w-5xl mx-auto py-6">
 <table class="table-auto w-full">
   <thead>
     <tr class='border'>
-      <th class="px-4 py-2">Title</th>
-      <th class="px-4 py-2">Author</th>
-      <th class="px-4 py-2">Views</th>
+      <th class="px-4 py-2">CPU Name</th>
+      <th class="px-4 py-2">CPU Mark</th>
+      <th class="px-4 py-2">Thread Rating</th>
+      <th class="px-4 py-2">Samples</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td class="border px-4 py-2">Intro to CSS</td>
-      <td class="border px-4 py-2">Adam</td>
-      <td class="border px-4 py-2">858</td>
-    </tr>
-    <tr class="bg-gray-100">
-      <td class="border px-4 py-2">A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-      <td class="border px-4 py-2">Adam</td>
-      <td class="border px-4 py-2">112</td>
-    </tr>
-    <tr>
-      <td class="border px-4 py-2">Intro to JavaScript</td>
-      <td class="border px-4 py-2">Chris</td>
-      <td class="border px-4 py-2">1,280</td>
-    </tr>
+    <template x-for="cpu in cpus.slice(page*per_page, (page+1)*per_page)" :key="cpu.name">
+      <tr>
+        <td class="px-4 py-2 border" x-text="cpu.name"></td>
+        <td class="px-4 py-2 border" x-text="cpu.cpu_mark"></td>
+        <td class="px-4 py-2 border" x-text="cpu.thread_rating"></td>
+        <td class="px-4 py-2 border" x-text="cpu.samples"></td>
+      </tr>
+    </template>
   </tbody>
 </table>
 
+<button
+x-bind:disabled="page==0" 
+x-bind:class="{ 'bg-blue-900': page==0, 'hover:bg-blue-900': page==0 }"
+class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700" 
+@click="page-=1"><</button>
+<span x-text="page"></span>
+<button 
+x-bind:disabled="page==cpus.length // per_page" 
+x-bind:class="{ 'bg-blue-900': page==cpus.length // per_page, 'hover:bg-blue-900': page==cpus.length // per_page }"
+class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700 disabled:opacity-45" 
+@click="page+=1">></button>
     </div>
   </main>
   </body>
   <script>
     console.log("Z")
     let data = () => {
+        let that = this;
 
-        console.log("DATA")
-        
         return {
-            'd': 33
+            loading: true,
+            cpus: [],
+            page: 0,
+            per_page: 10,
+            loadCPUs() {
+              console.log("Loading CPUs")
+              fetch('./cpus.json').then(response => response.json())
+                .then(data => {
+                 console.log(this.cpus)
+                  this.cpus = data;
+                  this.loading = false;
+                })    
+            }
         }
     }
   </script>
