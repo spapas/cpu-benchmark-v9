@@ -56,6 +56,16 @@ Here's a simple example that cycles through several background colors at differe
   <main x-data="data()" x-init="loadCPUs()">
     <span x-text='loading'>ss</span>
     <div class="max-w-5xl mx-auto py-6">
+    <div class="py-3">
+      <input name='filter' x-model='filter' 
+      class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      />
+      <button 
+      class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700" 
+      @click="filterCPUs()"
+      >Filter</button>
+    </div>
+
 <table class="table-auto w-full">
   <thead>
     <tr class='border'>
@@ -66,7 +76,7 @@ Here's a simple example that cycles through several background colors at differe
     </tr>
   </thead>
   <tbody>
-    <template x-for="cpu in cpus.slice(page*per_page, (page+1)*per_page)" :key="cpu.name">
+    <template x-for="cpu in fcpus.slice(page*per_page, (page+1)*per_page)" :key="cpu.name">
       <tr>
         <td class="px-4 py-2 border" x-text="cpu.name"></td>
         <td class="px-4 py-2 border" x-text="cpu.cpu_mark"></td>
@@ -84,8 +94,8 @@ class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700"
 @click="page-=1"><</button>
 <span x-text="page"></span>
 <button 
-x-bind:disabled="page==cpus.length // per_page" 
-x-bind:class="{ 'bg-blue-900': page==cpus.length // per_page, 'hover:bg-blue-900': page==cpus.length // per_page }"
+x-bind:disabled="page==Math.round(fcpus.length/per_page)" 
+x-bind:class="{ 'bg-blue-900': page==Math.round(fcpus.length/per_page), 'hover:bg-blue-900': page==Math.round(fcpus.length/per_page) }"
 class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700 disabled:opacity-45" 
 @click="page+=1">></button>
     </div>
@@ -99,14 +109,21 @@ class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700 disa
         return {
             loading: true,
             cpus: [],
+            fcpus: [],
             page: 0,
+            filter: '',
             per_page: 10,
+            filterCPUs() {
+              this.page = 0;
+              this.fcpus = this.cpus.filter(z => z.name.indexOf(this.filter)>=0)
+            },
             loadCPUs() {
               console.log("Loading CPUs")
               fetch('./cpus.json').then(response => response.json())
                 .then(data => {
                  console.log(this.cpus)
                   this.cpus = data;
+                  this.fcpus = this.cpus;
                   this.loading = false;
                 })    
             }
