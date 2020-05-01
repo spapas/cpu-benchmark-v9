@@ -3,12 +3,12 @@
   <title> </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+  <script src="alpine.js" defer></script>
 
   <body>
-  
+
   <header class="py-6  bg-gray-200">
     <div class="flex justify-center">
         <h1 class='font-bold text-4xl'>CPU List</h1>
@@ -19,15 +19,15 @@
 
   </header>
   <div class="max-w-6xl mx-auto bg-blue-100" x-data="{ open: false }">
-    <button 
-    class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700" 
-    @click="open=open?false:true" 
+    <button
+    class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700"
+    @click="open=open?false:true"
     x-text="open?'X':'?'"
     ></button>
     <h4 class='text-lg inline font-bold px-4' >Show help</h4>
-        
-    <div 
-    x-show.transition="open" 
+
+    <div
+    x-show.transition="open"
     @click.away="open=false"
     class=""
     >
@@ -61,7 +61,7 @@ Here's a simple example that cycles through several background colors at differe
       <input name='filter' x-model='filter' @input="filterCPUs()"
       class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
       />
-      
+
     </div>
 <div class='flex border justify-between'>
   <table class="table-auto w-3/5 p-2">
@@ -74,13 +74,13 @@ Here's a simple example that cycles through several background colors at differe
       </tr>
     </thead>
     <tbody>
-      <template x-for="cpu in fcpus.slice(page*per_page, (page+1)*per_page)" :key="cpu.name">
+      <template x-for="cpu in pcpus" :key="cpu.name">
         <tr>
           <td class="px-4 py-2 border" >
             <span x-text="cpu.name"></span>
             <button
-              class="font-bold rounded-sm bg-blue-500 text-white hover:bg-blue-700 leading-5 h-5 w-5" 
-              @click="addCompareCPU(cpu)">+</button>
+              class="font-bold rounded-sm bg-blue-500 text-white hover:bg-blue-700 leading-5 h-5 w-5"
+              @click="addCompareCPU(cpu.name)">+</button>
           </td>
           <td class="px-4 py-2 border" x-text="cpu.cpu_mark"></td>
           <td class="px-4 py-2 border" x-text="cpu.thread_rating"></td>
@@ -105,8 +105,8 @@ Here's a simple example that cycles through several background colors at differe
           <td class="px-4 py-2 border" >
             <span x-text="cpu.name"></span>
             <button
-              class="font-bold rounded-sm bg-blue-500 text-white hover:bg-blue-700 leading-5 h-5 w-5" 
-              @click="removeCompareCPU(cpu)">-</button>
+              class="font-bold rounded-sm bg-blue-500 text-white hover:bg-blue-700 leading-5 h-5 w-5"
+              @click="removeCompareCPU(cpu.name)">-</button>
           </td>
           <td class="px-4 py-2 border" x-text="cpu.cpu_mark"></td>
           <td class="px-4 py-2 border" x-text="cpu.thread_rating"></td>
@@ -118,17 +118,17 @@ Here's a simple example that cycles through several background colors at differe
 </div>
 
 <button
-  :disabled="page==0" 
+  :disabled="page==0"
   :class="{ 'bg-blue-900': page==0, 'hover:bg-blue-900': page==0 }"
-  class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700" 
-  @click="page-=1"><</button>
+  class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700"
+  @click="prevPage()"><</button>
 <span x-text="page"></span>
 
-<button 
-  :disabled="page==Math.round((fcpus.length-1)/per_page)" 
+<button
+  :disabled="page==Math.round((fcpus.length-1)/per_page)"
   :class="{ 'bg-blue-900': page==Math.round((fcpus.length-1)/per_page), 'hover:bg-blue-900': page==Math.round((fcpus.length-1)/per_page) }"
-  class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700" 
-  @click="page+=1">></button>
+  class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700"
+  @click="nextPage()">></button>
     </div>
   </main>
   </body>
@@ -142,9 +142,18 @@ Here's a simple example that cycles through several background colors at differe
             cpus: [],
             fcpus: [],
             ccpus: [],
+            pcpus: [],
             page: 0,
             filter: '',
             per_page: 10,
+            nextPage() {
+              this.page += 1
+              this.pcpus = this.fcpus.slice(this.page*this.per_page, (this.page+1)*this.per_page)
+            },
+            prevPage() {
+              this.page -= 1
+              this.pcpus = this.fcpus.slice(this.page*this.per_page, (this.page+1)*this.per_page)
+            },
             filterCPUs() {
               this.page = 0;
               this.fcpus = this.cpus.filter(z => z.name.indexOf(this.filter)>=0)
@@ -154,7 +163,8 @@ Here's a simple example that cycles through several background colors at differe
               this.page=0;
               this.filter='';
             },
-            addCompareCPU(cpu) {
+            addCompareCPU(cpuname) {
+              let cpu = this.fcpus.filter(function(cc) { return cc.name==cpuname })[0]
               if(this.ccpus.indexOf(cpu)==-1) this.ccpus.push(cpu)
             },
             removeCompareCPU(cpu) {
@@ -167,8 +177,9 @@ Here's a simple example that cycles through several background colors at differe
                  console.log(this.cpus)
                   this.cpus = data;
                   this.fcpus = this.cpus;
+                  this.pcpus = this.fcpus.slice(this.page*this.per_page, (this.page+1)*this.per_page)
                   this.loading = false;
-                })    
+                })
             }
         }
     }
