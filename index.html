@@ -64,39 +64,40 @@ Here's a simple example that cycles through several background colors at differe
 
     </div>
 <div class='flex border justify-between'>
-  <table class="table-auto w-3/5 p-2">
+  <table class="table-auto w-1/2 p-2">
     <thead>
       <tr class='border'>
-        <th class="px-4 py-2">CPU Name</th>
-        <th class="px-4 py-2">CPU Mark</th>
-        <th class="px-4 py-2">Thread Rating</th>
-        <th class="px-4 py-2">Samples</th>
+        <th class="px-2 py-2">CPU Name</th>
+        <th class="px-2 py-2">CPU Mark</th>
+        <th class="px-2 py-2">Thread Rating</th>
+        <th class="px-2 py-2">Samples</th>
       </tr>
     </thead>
     <tbody>
       <template x-for="cpu in pcpus" :key="cpu.name">
         <tr>
-          <td class="px-4 py-2 border" >
+          <td class="px-2 py-2 border" >
             <span x-text="cpu.name"></span>
             <button
               class="font-bold rounded-sm bg-blue-500 text-white hover:bg-blue-700 leading-5 h-5 w-5"
               @click="addCompareCPU(cpu.name)">+</button>
           </td>
-          <td class="px-4 py-2 border" x-text="cpu.cpu_mark"></td>
-          <td class="px-4 py-2 border" x-text="cpu.thread_rating"></td>
-          <td class="px-4 py-2 border" x-text="cpu.samples"></td>
+          <td class="px-2 py-2 border" x-text="cpu.cpu_mark"></td>
+          <td class="px-2 py-2 border" x-text="cpu.thread_rating"></td>
+          <td class="px-2 py-2 border" x-text="cpu.samples"></td>
         </tr>
       </template>
     </tbody>
   </table>
-  <div class='w-2/5 p-2 bourder'>
+  <div class='w-1/2 p-2 bourder'>
     <h3 class='font-bold text-xl'>Compare</h3>
     <table class="table-auto">
     <thead>
       <tr class='border'>
-        <th class="px-4 py-2">CPU Name</th>
-        <th class="px-4 py-2">CPU Mark</th>
-        <th class="px-4 py-2">Thread Rating</th>
+        <th class="px-2 py-2">CPU Name</th>
+        <th class="px-2 py-2">CPU Mark</th>
+        <th class="px-2 py-2">Thread Rating</th>
+        <th class="px-2 py-2">Notes</th>
       </tr>
     </thead>
     <tbody>
@@ -108,8 +109,13 @@ Here's a simple example that cycles through several background colors at differe
               class="font-bold rounded-sm bg-blue-500 text-white hover:bg-blue-700 leading-5 h-5 w-5"
               @click="removeCompareCPU(cpu.name)">-</button>
           </td>
-          <td class="px-4 py-2 border" x-text="cpu.cpu_mark"></td>
-          <td class="px-4 py-2 border" x-text="cpu.thread_rating"></td>
+          <td class="px-2 py-2 border" x-text="cpu.cpu_mark"></td>
+          <td class="px-2 py-2 border" x-text="cpu.thread_rating"></td>
+          <td class="px-2 py-2 border" >
+            <textarea name='notes' x-model='cpu.notes' @blur="cpuNotes()"
+            class="font-bold shadow appearance-none border rounded py-2 px-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            ></textarea>
+          </td>
         </tr>
       </template>
     </tbody>
@@ -166,12 +172,19 @@ Here's a simple example that cycles through several background colors at differe
             },
             addCompareCPU(cpuname) {
               let cpu = this.fcpus.filter(function(cc) { return cc.name==cpuname })[0]
+              cpu.notes = ''
               if(this.ccpus.indexOf(cpu)==-1) this.ccpus.push(cpu)
+              this.ccpus.sort(function(c1, c2) {
+                return Number(c2.cpu_mark) - Number(c1.cpu_mark)
+              })
               this.setLocalStorage()
             },
             removeCompareCPU(cpu) {
               this.ccpus.splice(this.ccpus.indexOf(cpu), 1)
               this.setLocalStorage()
+            },
+            cpuNotes() {
+              this.setLocalStorage();
             },
             setLocalStorage() {
               window.localStorage.setItem('cpus', JSON.stringify(this.ccpus))
@@ -183,8 +196,6 @@ Here's a simple example that cycles through several background colors at differe
               } else {
                 this.ccpus = []
               }
-
-
             },
             loadCPUs() {
               console.log("Loading CPUs")
