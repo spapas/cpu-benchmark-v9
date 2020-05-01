@@ -133,7 +133,6 @@ Here's a simple example that cycles through several background colors at differe
   </main>
   </body>
   <script>
-    console.log("Z")
     let data = () => {
         let that = this;
 
@@ -157,6 +156,8 @@ Here's a simple example that cycles through several background colors at differe
             filterCPUs() {
               this.page = 0;
               this.fcpus = this.cpus.filter(z => z.name.indexOf(this.filter)>=0)
+              this.pcpus = this.fcpus.slice(this.page*this.per_page, (this.page+1)*this.per_page)
+
             },
             clearFilter() {
               this.fcpus=this.cpus;
@@ -166,12 +167,28 @@ Here's a simple example that cycles through several background colors at differe
             addCompareCPU(cpuname) {
               let cpu = this.fcpus.filter(function(cc) { return cc.name==cpuname })[0]
               if(this.ccpus.indexOf(cpu)==-1) this.ccpus.push(cpu)
+              this.setLocalStorage()
             },
             removeCompareCPU(cpu) {
               this.ccpus.splice(this.ccpus.indexOf(cpu), 1)
+              this.setLocalStorage()
+            },
+            setLocalStorage() {
+              window.localStorage.setItem('cpus', JSON.stringify(this.ccpus))
+            },
+            getLocalStorage() {
+              let cpusjson = window.localStorage.getItem('cpus')
+              if(cpusjson) {
+               this.ccpus = JSON.parse(cpusjson)
+              } else {
+                this.ccpus = []
+              }
+
+
             },
             loadCPUs() {
               console.log("Loading CPUs")
+              this.getLocalStorage();
               fetch('./cpus.json').then(response => response.json())
                 .then(data => {
                  console.log(this.cpus)
