@@ -7,7 +7,7 @@
   <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
   <script src="alpine.js" defer></script>
 
-  <body>
+  <body class="flex flex-col min-h-screen ">
 
   <header class="py-6  bg-gray-200">
     <div class="flex justify-center">
@@ -18,6 +18,7 @@
     </div>
 
   </header>
+
   <div class="max-w-6xl mx-auto bg-blue-100" x-data="{ open: false }">
     <button
     class="font-bold py-2 px-4 rounded bg-blue-500 text-white hover:bg-blue-700"
@@ -53,7 +54,7 @@ Here's a simple example that cycles through several background colors at differe
 </div> <!-- -->
 </div> <!-- xdata -->
 
-  <main x-data="data()" x-init="loadCPUs()">
+  <main x-data="data()" x-init="loadCPUs()" class="flex-grow">
     <div class='loading' x-show='loading'>LOADING</div>
     <div class="max-w-6xl mx-auto py-6">
     <div class="py-3">
@@ -137,6 +138,17 @@ Here's a simple example that cycles through several background colors at differe
   @click="nextPage()">></button>
     </div>
   </main>
+
+  <footer class='py-2 px-3 bg-gray-200'>
+    Build with
+    <a
+    class="font-bold hover:text-blue-300 underline"
+    href=''>https://tailwindcss.com/</a> and
+    <a
+    class="font-bold hover:text-blue-300 underline"
+    href=''>https://github.com/alpinejs/alpine</a><br />
+    CPUs list from Passmark Software: https://www.cpubenchmark.net/pt9_cpu_list.php
+  </footer>
   </body>
   <script>
     let data = () => {
