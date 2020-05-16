@@ -142,15 +142,21 @@ Here's a simple example that cycles through several background colors at differe
   <footer class='py-2 px-3 bg-gray-200'>
     Build with
     <a
-    class="font-bold hover:text-blue-300 underline"
-    href=''>https://tailwindcss.com/</a> and
+    class="font-bold text-blue-600 hover:text-blue-800 underline"
+    href='https://tailwindcss.com/'>https://tailwindcss.com/</a> and
     <a
-    class="font-bold hover:text-blue-300 underline"
-    href=''>https://github.com/alpinejs/alpine</a><br />
-    CPUs list from Passmark Software: https://www.cpubenchmark.net/pt9_cpu_list.php
+    class="font-bold text-blue-600 hover:text-blue-800 underline"
+    href='https://github.com/alpinejs/alpine'>https://github.com/alpinejs/alpine</a><br />
+    CPUs list from Passmark Software: 
+    <a
+    class="font-bold text-blue-600 hover:text-blue-800 underline"
+    href='https://www.cpubenchmark.net/pt9_cpu_list.php'
+    >https://www.cpubenchmark.net/pt9_cpu_list.php</a>
   </footer>
   </body>
   <script>
+
+
     let data = () => {
         let that = this;
 
@@ -223,5 +229,53 @@ Here's a simple example that cycles through several background colors at differe
             }
         }
     }
+
+
+
+  ////////////////////////
+  // Add a konami code from: https://stackoverflow.com/a/31627191/119071
+  //////////////////////////
+
+  // a key map of allowed keys
+  var allowedKeys = {
+    37: 'left',
+    38: 'up',
+    39: 'right',
+    40: 'down',
+    65: 'a',
+    66: 'b'
+  };
+
+  // Only use arrows for now
+  var konamiCode = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'up', 'down'];
+
+  // a variable to remember the 'position' the user has reached so far.
+  var konamiCodePosition = 0;
+
+  // add keydown event listener
+  document.addEventListener('keydown', function(e) {
+    // get the value of the key code from the key map
+    var key = allowedKeys[e.keyCode];
+    // get the value of the required key from the konami code
+    var requiredKey = konamiCode[konamiCodePosition];
+    // compare the key with the required key
+    if (key == requiredKey) {
+      // move to the next key in the konami code sequence
+      konamiCodePosition++;
+      // if the last key is reached, activate cheats
+      if (konamiCodePosition == konamiCode.length) {
+        activateCheats();
+        konamiCodePosition = 0;
+      }
+    } else {
+      konamiCodePosition = 0;
+    }
+  });
+
+  function activateCheats() {
+    document.body.style.backgroundColor = "#298312";
+    alert("cheats activated");
+  }
+
   </script>
 </html>
